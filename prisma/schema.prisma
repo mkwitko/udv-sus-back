@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  cpf          String?   @unique
+  password     String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  isDeleted    Boolean   @default(false)
+  birthday     String?
+  avatarUrl    String?
+  email        String?   @unique
+  phone        String?
+  hierarchy    String?
+  isActive     Boolean   @default(true)
+  isVerified   Boolean   @default(false)
+  isAdmin      Boolean   @default(false)
+  isSuperAdmin Boolean   @default(false)
+
+  center   Center? @relation(fields: [centerId], references: [id])
+  centerId String?
+
+  @@map("users")
+}
+
+model Center {
+  id        String    @id @default(cuid())
+  name      String
+  region    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean   @default(false)
+  user      User[]
+  Plants    Plants[]
+
+  @@map("centers")
+}
+
+model Plants {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  observation String?
+
+  image                String?
+  origin               String?
+  identificationNumber String?
+  isIdentified         Boolean @default(false)
+
+  plantationDate DateTime?
+  pictureDate    DateTime?
+
+  lastWatering      DateTime?
+  lastFertilization DateTime?
+  lastPestControl   DateTime?
+  lastPruning       DateTime?
+  lastHarvest       DateTime?
+  lastWeeding       DateTime?
+  lastSoilAnalysis  DateTime?
+
+  latitude  Float?
+  longitude Float?
+  address   String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean   @default(false)
+
+  center   Center? @relation(fields: [centerId], references: [id])
+  centerId String?
+
+  type   PlantsType? @relation(fields: [typeId], references: [id])
+  typeId String?
+
+  @@map("plants")
+}
+
+model PlantsType {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean   @default(false)
+  Plants    Plants[]
+}
+
+model PlantationCalendarDates {
+  id                         String    @id @default(cuid())
+  name                       String
+  type                       String
+  date                       DateTime
+  tooltip                    String?
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+  deletedAt                  DateTime?
+  isDeleted                  Boolean   @default(false)
+  plantationCalendarCategory String
+}
+
+model Faq {
+  id String @id @default(cuid())
+  category String
+  type String
+  question String
+  answer String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean @default(false)
+  isActive Boolean @default(true)
+}
+
+model News {
+  id String @id @default(cuid())
+  title String
+  description String
+  image String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean @default(false)
+  isActive Boolean @default(true)
+}
