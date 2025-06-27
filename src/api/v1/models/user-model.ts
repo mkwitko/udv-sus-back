@@ -9,6 +9,15 @@ export class UserModel {
   ) {
     const user = await prisma.user.create({
       data,
+      include: {
+        center: {
+          select: {
+            id: true,
+            name: true,
+            region: true,
+          },
+        },
+      },
     });
     return user;
   }
@@ -20,6 +29,15 @@ export class UserModel {
       where: {
         id,
         isDeleted: false,
+      },
+      include: {
+        center: {
+          select: {
+            id: true,
+            name: true,
+            region: true,
+          },
+        },
       },
     });
 

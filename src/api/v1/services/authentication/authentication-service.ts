@@ -1,6 +1,6 @@
-import { BadRequestError } from "@/errors/bad-request-error";
 import { compare } from "bcryptjs";
 import { UserModel } from "../../models/user-model";
+import { BadRequestError } from "@/errors/bad-request-error";
 
 interface AuthenticationParams {
   email: string;

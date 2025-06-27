@@ -20,6 +20,11 @@ export const userResponse = z.object({
   isVerified: z.boolean(),
   isAdmin: z.boolean(),
   isSuperAdmin: z.boolean(),
+  center: z.object({
+    id: z.string(),
+    name: z.string(),
+    region: z.string(),
+  }).nullable()
 });
 
 export async function createUser(app: FastifyInstance) {
