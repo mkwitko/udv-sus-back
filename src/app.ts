@@ -43,7 +43,7 @@ app.setSerializerCompiler(serializerCompiler);
 
 app.register(fastifyCookie);
 
-// Cors Policy
+// Cors Policyy
 app.register(fastifyCors, {
   origin:
     env.ENVIRONMENT === "production"
