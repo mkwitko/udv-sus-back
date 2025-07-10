@@ -5,6 +5,7 @@ import { createPlantsService } from '../../services/plants/create-plants-service
 
 export const plantResponse = z.object({
   id: z.string(),
+  offlinePreviousId: z.string().nullable(),
   name: z.string(),
   description: z.string().nullable(),
   observation: z.string().nullable(),
