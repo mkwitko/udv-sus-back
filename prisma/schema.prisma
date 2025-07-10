@@ -48,6 +48,7 @@ model Center {
 
 model Plants {
   id          String  @id @default(cuid())
+  offlinePreviousId String? @unique
   name        String
   description String?
   observation String?

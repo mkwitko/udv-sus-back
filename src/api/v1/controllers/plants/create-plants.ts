@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import z from "zod";
-import { createPlantsService } from "../../services/plants/create-plants-service";
+import type { FastifyInstance } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import z from 'zod'
+import { createPlantsService } from '../../services/plants/create-plants-service'
 
 export const plantResponse = z.object({
   id: z.string(),
@@ -46,17 +46,17 @@ export const plantResponse = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
-});
+})
 
 export async function createPlants(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    "/plants/create",
+    '/plants/create',
     {
       schema: {
-        tags: ["Plants"],
-        summary: "Create Plants",
-        description: "Create a new Plants",
-        operationId: "createPlants",
+        tags: ['Plants'],
+        summary: 'Create Plants',
+        description: 'Create a new Plants',
+        operationId: 'createPlants',
         body: createPlantRequestSchema,
         response: {
           201: plantResponse,
@@ -64,13 +64,14 @@ export async function createPlants(app: FastifyInstance) {
       },
     },
     async (request, response) => {
-      const { plants } = await createPlantsService(request.body);
-      return response.status(201).send(plants);
-    }
-  );
+      const { plants } = await createPlantsService(request.body)
+      return response.status(201).send(plants)
+    },
+  )
 }
 
 export const createPlantRequestSchema = z.object({
+  offlinePreviousId: z.string().optional(),
   name: z.string(),
   description: z.string().optional(),
   observation: z.string().optional(),
@@ -97,4 +98,4 @@ export const createPlantRequestSchema = z.object({
 
   typeId: z.string().nullable(),
   centerId: z.string().nullable(),
-});
+})
