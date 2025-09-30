@@ -1,16 +1,16 @@
 import { hash } from "bcryptjs";
-import { UserModel } from "../../models/user-model";
+import { UsuariosModel } from "../../models/usuarios-model";
 import type z from "zod";
-import type { createUserRequestScheam } from "../../controllers/user/create-user";
+import type { UsuariosCreateInputSchema } from "prisma/generated/zod";
 
 export async function createUserService(
-  data: z.infer<typeof createUserRequestScheam>
+  data: z.infer<typeof UsuariosCreateInputSchema>
 ) {
-  const hashedPassword = await hash(data.password, 10);
-  const userModel = new UserModel();
+  const hashedPassword = await hash(data.senha, 10);
+  const userModel = new UsuariosModel();
   const user = await userModel.create({
     ...data,
-    password: hashedPassword,
+    senha: hashedPassword,
   });
   return { user };
 }

@@ -2,12 +2,12 @@ import { app } from "@/app";
 import { UnauthorizedError } from "@/errors/unauthorized-error";
 import type { FastifyJWT } from "@fastify/jwt";
 import { findUserByIdService } from "../user/find-user-by-id-service";
-import type { User } from "@prisma/client";
+import type { Usuarios } from "@prisma/client";
 
 export async function refreshTokenService(refreshToken: string): Promise<{
   accessToken: string;
   refreshToken: string;
-  user: Omit<User, "password">;
+  user: Omit<Usuarios, "senha">;
 }> {
   const decode = app.jwt.decode<FastifyJWT["payload"]>(refreshToken);
 

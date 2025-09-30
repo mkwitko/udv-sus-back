@@ -1,11 +1,11 @@
-import { UserModel } from "@/api/v1/models/user-model";
+import { UsuariosModel } from "@/api/v1/models/usuarios-model";
 import type z from "zod";
-import type { updateUserRequestScheam } from "../../controllers/user/update-user";
+import type { UsuariosUpdateInputSchema } from "prisma/generated/zod";
 
 export async function updateUserService(
-  data: z.infer<typeof updateUserRequestScheam>
+  data: z.infer<typeof UsuariosUpdateInputSchema>
 ) {
-  const userModel = new UserModel();
+  const userModel = new UsuariosModel();
   const user = await userModel.update(data);
   return { user };
 }

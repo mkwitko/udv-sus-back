@@ -2,135 +2,135 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod {
+  provider = "zod-prisma-types"
+  output   = "./generated/zod"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id           String    @id @default(cuid())
-  name         String
-  cpf          String?   @unique
-  password     String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
-  isDeleted    Boolean   @default(false)
-  birthday     String?
-  avatarUrl    String?
-  email        String?   @unique
-  phone        String?
-  hierarchy    String?
-  isActive     Boolean   @default(true)
-  isVerified   Boolean   @default(false)
-  isAdmin      Boolean   @default(false)
-  isSuperAdmin Boolean   @default(false)
+model Usuarios {
+  id            String    @id @default(cuid())
+  nome          String
+  cpf           String?   @unique
+  senha         String
+  criadoEm      DateTime  @default(now())
+  atualizadoEm  DateTime  @updatedAt
+  deletadoEm    DateTime?
+  deletado      Boolean   @default(false)
+  email         String?   @unique
+  ativo         Boolean   @default(true)
+  administrador Boolean   @default(false)
 
-  center   Center? @relation(fields: [centerId], references: [id])
-  centerId String?
+  nucleo   Nucleos? @relation(fields: [nucleoId], references: [id])
+  nucleoId String?
 
-  @@map("users")
+  @@map("usuarios")
 }
 
-model Center {
-  id        String    @id @default(cuid())
-  name      String
-  region    String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  isDeleted Boolean   @default(false)
-  user      User[]
-  Plants    Plants[]
+model Nucleos {
+  id           String     @id @default(cuid())
+  nome         String
+  regiao       String
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
+  deletadoEm   DateTime?
+  deletado     Boolean    @default(false)
+  usuarios     Usuarios[]
 
-  @@map("centers")
+  preparos Preparos[]
+  sessoes  Sessoes[]
+
+  @@map("nucleos")
 }
 
-model Plants {
-  id          String  @id @default(cuid())
-  offlinePreviousId String? @unique
-  name        String
-  description String?
-  observation String?
-
-  image                String?
-  origin               String?
-  identificationNumber String?
-  isIdentified         Boolean @default(false)
-
-  plantationDate DateTime?
-  pictureDate    DateTime?
-
-  lastWatering      DateTime?
-  lastFertilization DateTime?
-  lastPestControl   DateTime?
-  lastPruning       DateTime?
-  lastHarvest       DateTime?
-  lastWeeding       DateTime?
-  lastSoilAnalysis  DateTime?
-
-  latitude  Float?
-  longitude Float?
-  address   String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  isDeleted Boolean   @default(false)
-
-  center   Center? @relation(fields: [centerId], references: [id])
-  centerId String?
-
-  type   PlantsType? @relation(fields: [typeId], references: [id])
-  typeId String?
-
-  @@map("plants")
+model Sessoes {
+  id                String   @id @default(cuid())
+  sessao            String
+  pessoas           String
+  quantidadeVegetal String
+  Nucleos           Nucleos? @relation(fields: [nucleosId], references: [id])
+  nucleosId         String?
 }
 
-model PlantsType {
-  id        String    @id @default(cuid())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  isDeleted Boolean   @default(false)
-  Plants    Plants[]
-}
-
-model PlantationCalendarDates {
-  id                         String    @id @default(cuid())
-  name                       String
-  type                       String
-  date                       DateTime
-  tooltip                    String?
-  createdAt                  DateTime  @default(now())
-  updatedAt                  DateTime  @updatedAt
-  deletedAt                  DateTime?
-  isDeleted                  Boolean   @default(false)
-  plantationCalendarCategory String
-}
-
-model Faq {
+model Preparos {
   id String @id @default(cuid())
-  category String
-  type String
-  question String
-  answer String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
-  isDeleted Boolean @default(false)
-  isActive Boolean @default(true)
+
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+  deletado     Boolean   @default(false)
+
+  inicio         DateTime
+  fim            DateTime
+  producaoLitros String
+
+  mariri   Mariri? @relation(fields: [maririId], references: [id])
+  maririId String?
+
+  chacrona   Chacrona? @relation(fields: [chacronaId], references: [id])
+  chacronaId String?
+
+  lenha     Lenha?   @relation(fields: [lenhaId], references: [id])
+  lenhaId   String?
+  Nucleos   Nucleos? @relation(fields: [nucleosId], references: [id])
+  nucleosId String?
+
+  @@map("preparos")
 }
 
-model News {
+model Mariri {
   id String @id @default(cuid())
-  title String
-  description String
-  image String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
-  isDeleted Boolean @default(false)
-  isActive Boolean @default(true)
+
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+  deletado     Boolean   @default(false)
+
+  pesoKg         String
+  unidades       String
+  tipo           String
+  tipoPlantacao  String
+  origemMensagem String
+  Preparos       Preparos[]
+
+  @@map("mariri")
+}
+
+model Chacrona {
+  id String @id @default(cuid())
+
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+  deletado     Boolean   @default(false)
+
+  pesoKg         String
+  unidades       String
+  tipo           String
+  tipoPlantacao  String
+  origemMensagem String
+  Preparos       Preparos[]
+
+  @@map("chacrona")
+}
+
+model Lenha {
+  id String @id @default(cuid())
+
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+  deletado     Boolean   @default(false)
+
+  quantidadeM2       String
+  tempoFornalhaAcesa String
+  tipoLenha          String
+  tipoFornalha       String
+  Preparos           Preparos[]
+
+  @@map("lenha")
 }

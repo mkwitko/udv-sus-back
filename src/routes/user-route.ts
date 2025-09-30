@@ -1,10 +1,10 @@
-import { createUser } from "@/api/v1/controllers/user/create-user";
-import { deleteUser } from "@/api/v1/controllers/user/delete-user";
-import { findMe } from "@/api/v1/controllers/user/find-me";
-import { findUserById } from "@/api/v1/controllers/user/find-user-by-id";
-import { findUsers } from "@/api/v1/controllers/user/find-users";
-import { initUser } from "@/api/v1/controllers/user/init-user";
-import { updateUser } from "@/api/v1/controllers/user/update-user";
+import { createUser } from "@/api/v1/controllers/usuarios/create-user";
+import { deleteUser } from "@/api/v1/controllers/usuarios/delete-user";
+import { findMe } from "@/api/v1/controllers/usuarios/find-me";
+import { findUserById } from "@/api/v1/controllers/usuarios/find-user-by-id";
+import { findUsers } from "@/api/v1/controllers/usuarios/find-users";
+import { initUser } from "@/api/v1/controllers/usuarios/init-user";
+import { updateUser } from "@/api/v1/controllers/usuarios/update-user";
 import { env } from "@/env";
 import type { FastifyInstance } from "fastify";
 

@@ -1,4 +1,4 @@
-import { UserModel } from '../../models/user-model'
+import { UsuariosModel } from '../../models/usuarios-model'
 
 export async function deleteUserService({
   userId,
@@ -7,7 +7,7 @@ export async function deleteUserService({
   userId: string
   soft?: boolean
 }) {
-  const userModel = new UserModel()
+  const userModel = new UsuariosModel()
   const user = await userModel.exclude(userId, soft)
   return { user }
 }

@@ -1,5 +1,5 @@
 import { compare } from "bcryptjs";
-import { UserModel } from "../../models/user-model";
+import { UsuariosModel } from "../../models/usuarios-model";
 import { BadRequestError } from "@/errors/bad-request-error";
 
 interface AuthenticationParams {
@@ -11,16 +11,16 @@ export async function authenticationService({
   email,
   password,
 }: AuthenticationParams) {
-  const userModel = new UserModel();
-  const user = await userModel.findByEmail(email);
-  const doesPasswordMatch = await compare(password, user.password);
+  const usuariosModel = new UsuariosModel();
+  const user = await usuariosModel.findByEmail(email);
+  const doesPasswordMatch = await compare(password, user.senha);
 
   if (doesPasswordMatch === false) {
     throw new BadRequestError("Credenciais inválidas");
   }
 
   // Omit the password from the returned user object
-  const { password: _, ...userWithoutPassword } = user;
+  const { senha: _, ...userWithoutPassword } = user;
 
   return { user: userWithoutPassword };
 }
