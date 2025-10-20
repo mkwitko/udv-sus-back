@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import type { LenhaCreateInputSchema, LenhaUpdateInputSchema } from "prisma/generated/zod";
 import type z from "zod";
+import type { LenhaCreateInputSchema } from "../controllers/lenha/create-lenha";
+import type { LenhaUpdateInputSchema } from "../controllers/lenha/update-lenha";
 
 const prisma = new PrismaClient();
 

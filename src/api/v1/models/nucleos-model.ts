@@ -1,6 +1,7 @@
 import { prisma } from "prisma/db";
-import type { NucleosCreateInputSchema, NucleosUpdateInputSchema } from "prisma/generated/zod";
 import type { z } from "zod";
+import type { NucleosCreateInputSchema } from "../controllers/nucleos/create-nucleo";
+import type { NucleosUpdateInputSchema } from "../controllers/nucleos/update-nucleo";
 
 export class NucleosModel {
   // Cria núcleo

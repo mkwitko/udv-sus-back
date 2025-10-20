@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import type { MaririCreateInputSchema, MaririUpdateInputSchema } from "prisma/generated/zod";
 import type z from "zod";
+import type { MaririCreateInputSchema } from "../controllers/mariri/create-mariri";
+import type { MaririUpdateInputSchema } from "../controllers/mariri/update-mariri";
 
 const prisma = new PrismaClient();
 

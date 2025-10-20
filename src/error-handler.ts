@@ -11,6 +11,7 @@ import { clearAuth } from "./api/v1/services/authentication/clear-auth-service";
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
 export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
+  console.log(error);
   if (error instanceof ZodError) {
     return reply.status(400).send({
       message: "Erro de validação",

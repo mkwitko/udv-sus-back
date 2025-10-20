@@ -2,11 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator zod {
-  provider = "zod-prisma-types"
-  output   = "./generated/zod"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -23,10 +18,11 @@ model Usuarios {
   deletado      Boolean   @default(false)
   email         String?   @unique
   ativo         Boolean   @default(true)
-  administrador Boolean   @default(false)
 
   nucleo   Nucleos? @relation(fields: [nucleoId], references: [id])
   nucleoId String?
+
+  permissoes Permissoes[]
 
   @@map("usuarios")
 }
@@ -34,23 +30,35 @@ model Usuarios {
 model Nucleos {
   id           String     @id @default(cuid())
   nome         String
-  regiao       String
   criadoEm     DateTime   @default(now())
   atualizadoEm DateTime   @updatedAt
   deletadoEm   DateTime?
   deletado     Boolean    @default(false)
   usuarios     Usuarios[]
 
-  preparos Preparos[]
-  sessoes  Sessoes[]
+  preparos  Preparos[]
+  sessoes   Sessoes[]
+  regioes   Regioes?   @relation(fields: [regioesId], references: [id])
+  regioesId String?
 
   @@map("nucleos")
 }
 
+model Regioes {
+  id   String @id @default(cuid())
+  nome String
+
+  nucleos Nucleos[]
+
+  @@map("regioes")
+}
+
 model Sessoes {
   id                String   @id @default(cuid())
+  descricao         String?
   sessao            String
   pessoas           String
+  data              String
   quantidadeVegetal String
   Nucleos           Nucleos? @relation(fields: [nucleosId], references: [id])
   nucleosId         String?
@@ -110,7 +118,6 @@ model Chacrona {
 
   pesoKg         String
   unidades       String
-  tipo           String
   tipoPlantacao  String
   origemMensagem String
   Preparos       Preparos[]
@@ -134,3 +141,14 @@ model Lenha {
 
   @@map("lenha")
 }
+
+model Permissoes {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  usuarios    Usuarios[]
+
+  @@map("permissoes")
+}
+
+

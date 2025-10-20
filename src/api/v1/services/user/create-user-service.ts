@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
-import { UsuariosModel } from "../../models/usuarios-model";
 import type z from "zod";
-import type { UsuariosCreateInputSchema } from "prisma/generated/zod";
+import type { UsuariosCreateInputSchema } from "../../controllers/usuarios/create-user";
+import { UsuariosModel } from "../../models/usuarios-model";
 
 export async function createUserService(
   data: z.infer<typeof UsuariosCreateInputSchema>

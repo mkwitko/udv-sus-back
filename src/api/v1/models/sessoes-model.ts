@@ -1,15 +1,17 @@
-import { PrismaClient, type Sessoes } from "@prisma/client";
-import type { SessoesUpdateInputSchema } from "prisma/generated/zod";
+import { PrismaClient } from "@prisma/client";
 import type z from "zod";
+import type { SessoesCreateInputSchema } from "../controllers/sessoes/create-sessao";
+import type { SessoesUpdateInputSchema } from "../controllers/sessoes/update-sessao";
 
 const prisma = new PrismaClient();
 
 export class SessoesModel {
-  async create(data: Omit<Sessoes, "id" | "criadoEm" | "atualizadoEm" | "deletadoEm" | "deletado">) {
+  async create(data: z.infer<typeof SessoesCreateInputSchema>) {
     return prisma.sessoes.create({ data });
   }
 
   async update(data: z.infer<typeof SessoesUpdateInputSchema>) {
+    console.log(data)
     return prisma.sessoes.update({
       where: { id: data.id as string },
       data,
@@ -20,8 +22,35 @@ export class SessoesModel {
     return prisma.sessoes.findUnique({ where: { id } });
   }
 
-  async findAll() {
-    return prisma.sessoes.findMany();
+  async findAll(
+    query: {
+      dataInicio?: string;
+      dataFim?: string;
+    },
+    nucleoId: string
+  ) {
+    const { dataInicio, dataFim } = query;
+
+    const where: Record<string, any> = {};
+
+    if (dataInicio && dataFim) {
+      where.data = {
+        gte: dataInicio,
+        lte: dataFim,
+      };
+    } else if (dataInicio) {
+      where.data = { gte: dataInicio };
+    } else if (dataFim) {
+      where.data = { lte: dataFim };
+    }
+
+    return prisma.sessoes.findMany({
+      where: {
+        ...where,
+        nucleosId: nucleoId
+      },
+      orderBy: { data: "desc" },
+    });
   }
 
   async exclude(id: string) {

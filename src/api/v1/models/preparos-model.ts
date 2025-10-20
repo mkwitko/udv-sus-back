@@ -1,12 +1,45 @@
 import { PrismaClient } from "@prisma/client";
-import type { PreparosCreateInputSchema, PreparosUpdateInputSchema } from "prisma/generated/zod";
 import type z from "zod";
+import type { PreparosUpdateInputSchema } from "../controllers/preparos/update-preparo";
+import type { PreparosCreateInputSchema } from "../controllers/preparos/create-preparo";
 
 const prisma = new PrismaClient();
 
 export class PreparosModel {
   async create(data: z.infer<typeof PreparosCreateInputSchema>) {
-    return prisma.preparos.create({ data });
+    const { mariri, chacrona, lenha, nucleosId, ...preparoData } = data;
+
+    return prisma.preparos.create({
+      data: {
+        ...preparoData,
+        ...(mariri && {
+          mariri: {
+            create: mariri,
+          },
+        }),
+        ...(chacrona && {
+          chacrona: {
+            create: chacrona,
+          },
+        }),
+        ...(lenha && {
+          lenha: {
+            create: lenha,
+          },
+        }),
+        ...(nucleosId && {
+          Nucleos: {
+            connect: { id: nucleosId },
+          },
+        }),
+      },
+      include: {
+        mariri: true,
+        chacrona: true,
+        lenha: true,
+        Nucleos: true,
+      },
+    });
   }
 
   async update(data: z.infer<typeof PreparosUpdateInputSchema>) {
@@ -20,11 +53,39 @@ export class PreparosModel {
     return prisma.preparos.findUnique({ where: { id } });
   }
 
-  async findAll() {
-    return prisma.preparos.findMany();
+  async findAll(
+    query: {
+      dataInicio?: string;
+      dataFim?: string;
+    },
+    nucleoId: string
+  ) {
+    const { dataInicio, dataFim } = query;
+
+    const where: Record<string, any> = {};
+
+    if (dataInicio && dataFim) {
+      where.inicio = {
+        gte: new Date(dataInicio),
+        lte: new Date(dataFim),
+      };
+    } 
+
+    return prisma.preparos.findMany({
+      where: {
+        ...where,
+        nucleosId: nucleoId
+      },
+      include: {
+        mariri: true,
+        chacrona: true,
+        lenha: true,
+      },
+      orderBy: { inicio: "desc" },
+    });
   }
 
-  async exclude(id: string, soft = true) {
+  async exclude(id: string, soft = false) {
     if (soft) {
       return prisma.preparos.update({
         where: { id },

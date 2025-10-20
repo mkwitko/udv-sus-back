@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import type { ChacronaCreateInputSchema, ChacronaUpdateInputSchema } from "prisma/generated/zod";
 import type z from "zod";
+import type { ChacronaCreateInputSchema } from "../controllers/chacrona/create-chacrona";
+import type { ChacronaUpdateInputSchema } from "../controllers/chacrona/update-chacrona";
 
 const prisma = new PrismaClient();
 

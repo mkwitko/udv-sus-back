@@ -1,12 +1,12 @@
 import { app } from "@/app";
 import { userRoute } from "./user-route";
 import { authenticationRoute } from "./authentication-route";
-import { registerChacronaRoutes } from "@/api/v1/controllers/chacrona/chacrona.controller";
-import { registerLenhaRoutes } from "@/api/v1/controllers/lenha/lenha.controller";
-import { registerMaririRoutes } from "@/api/v1/controllers/mariri/mariri.controller";
-import { registerNucleosRoutes } from "@/api/v1/controllers/nucleos/nucleos.controller";
-import { registerPreparosRoutes } from "@/api/v1/controllers/preparos/preparos.controller";
-import { registerSessoesRoutes } from "@/api/v1/controllers/sessoes/sessoes.controller";
+import { registerChacronaRoutes } from "./chacrona-route";
+import { registerLenhaRoutes } from "./lenha-router";
+import { registerMaririRoutes } from "./mariri-router";
+import { registerNucleosRoutes } from "./nucleos-route";
+import { registerPreparosRoutes } from "./preparos-route";
+import { registerSessoesRoutes } from "./sessoes-route";
 
 export default async function Routing() {
   authenticationRoute(app);

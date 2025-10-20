@@ -1,9 +1,8 @@
 import { prisma } from "prisma/db";
+
 import type { z } from "zod";
-import type {
-  UsuariosCreateInputSchema,
-  UsuariosUpdateInputSchema,
-} from "prisma/generated/zod";
+import type { UsuariosCreateInputSchema } from "../controllers/usuarios/create-user";
+import type { UsuariosUpdateInputSchema } from "../controllers/usuarios/update-user";
 
 export class UsuariosModel {
   // Cria usuário
@@ -17,9 +16,20 @@ export class UsuariosModel {
           select: {
             id: true,
             nome: true,
-            regiao: true,
+            regioes: {
+              select: {
+                id: true,
+                nome: true,
+              }
+            },
           },
         },
+        permissoes: {
+          select: {
+            id: true,
+            name: true,
+          }
+        }
       },
     });
     return user;
@@ -39,9 +49,20 @@ export class UsuariosModel {
           select: {
             id: true,
             nome: true,
-            regiao: true,
+            regioes: {
+              select: {
+                id: true,
+                nome: true,
+              }
+            },
           },
         },
+        permissoes: {
+          select: {
+            id: true,
+            name: true,
+          }
+        }
       },
     });
 

@@ -3,7 +3,20 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { updateUserService } from "../../services/user/update-user-service";
 import { authenticationMiddleware } from "@/middlewares/authentication-middleware";
 import { userResponse } from "./create-user";
-import { UsuariosUpdateInputSchema } from "prisma/generated/zod";
+import z from "zod";
+
+export const UsuariosUpdateInputSchema = z.object({
+  id: z.string(),
+  nome: z.string().optional(),
+  cpf: z.string().optional(),
+  senha: z.string().optional(),
+  email: z.string().email().optional(),
+  ativo: z.boolean().optional(),
+  administrador: z.boolean().optional(),
+  nucleoId: z.string().optional(),
+  deletado: z.boolean().optional(),
+  deletadoEm: z.date().optional(),
+});
 
 export async function updateUser(app: FastifyInstance) {
   app

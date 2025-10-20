@@ -2,17 +2,32 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { createUserService } from "../../services/user/create-user-service";
-import { UsuariosCreateInputSchema } from "prisma/generated/zod";
+
+export const UsuariosCreateInputSchema = z.object({
+  nome: z.string(),
+  cpf: z.string().optional(),
+  senha: z.string(),
+  email: z.string().email().optional(),
+  ativo: z.boolean().optional(),
+  administrador: z.boolean().optional(),
+  nucleoId: z.string().optional(),
+});
 
 export const userResponse = z.object({
   id: z.string(),
   nome: z.string(),
   email: z.string().nullable(),
-  administrador: z.boolean(),
+  permissoes: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+  })),
   nucleo: z.object({
     id: z.string(),
     nome: z.string(),
-    regiao: z.string(),
+    regioes: z.object({
+      id: z.string(),
+      nome: z.string(),
+    }).nullable()
   }).nullable()
 });
 
