@@ -92,9 +92,9 @@ export async function refreshExpiringTokens() {
 
 /**
  * Inicia um intervalo para refresh automático
- * @param intervalMs Intervalo em milissegundos (padrão: 1 minuto)
+ * @param intervalMs Intervalo em milissegundos (padrão: 5 minuto)
  */
-export function startAutoRefreshService(intervalMs = 60 * 1000) {
+export function startAutoRefreshService(intervalMs = 60 * 1000 * 5) {
   console.log(`[Token Refresh Service] Starting auto-refresh service (interval: ${intervalMs}ms)`)
 
   // Executar imediatamente
