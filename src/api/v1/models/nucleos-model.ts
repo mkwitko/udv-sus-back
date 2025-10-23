@@ -8,6 +8,9 @@ export class NucleosModel {
   async create(data: z.infer<typeof NucleosCreateInputSchema>) {
     const center = await prisma.nucleos.create({
       data,
+      include: {
+        regioes: true
+      }
     });
     return center;
   }
@@ -16,6 +19,9 @@ export class NucleosModel {
   async findById(id: string) {
     const center = await prisma.nucleos.findUniqueOrThrow({
       where: { id },
+      include: {
+        regioes: true
+      }
     });
 
     return center;
@@ -25,6 +31,9 @@ export class NucleosModel {
   async findAll() {
     const centers = await prisma.nucleos.findMany({
       where: { deletado: false },
+      include: {
+        regioes: true
+      }
     });
 
     return centers;

@@ -22,6 +22,12 @@ export const sessoesResponse = z.object({
   pessoas: z.string(),
   quantidadeVegetal: z.string(),
   nucleosId: z.string().nullable().optional(),
+  Nucleos: z.object({
+    nome: z.string(),
+    regioes: z.object({
+      nome: z.string(),
+    }).nullable()
+  }).nullable()
 })
 
 export async function createSessaoRoute(app: FastifyInstance) {

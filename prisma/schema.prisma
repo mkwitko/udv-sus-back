@@ -8,23 +8,42 @@ datasource db {
 }
 
 model Usuarios {
-  id            String    @id @default(cuid())
-  nome          String
-  cpf           String?   @unique
-  senha         String
-  criadoEm      DateTime  @default(now())
-  atualizadoEm  DateTime  @updatedAt
-  deletadoEm    DateTime?
-  deletado      Boolean   @default(false)
-  email         String?   @unique
-  ativo         Boolean   @default(true)
+  id           String    @id @default(cuid())
+  nome         String
+  cpf          String?   @unique
+  senha        String
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+  deletado     Boolean   @default(false)
+  email        String?   @unique
+  ativo        Boolean   @default(true)
 
   nucleo   Nucleos? @relation(fields: [nucleoId], references: [id])
   nucleoId String?
 
-  permissoes Permissoes[]
+  permissoes   Permissoes[]
+  googleTokens GoogleTokens?
 
   @@map("usuarios")
+}
+
+model GoogleTokens {
+  id           String   @id @default(cuid())
+  sessionId    String   @unique
+  accessToken  String   @db.Text
+  refreshToken String   @db.Text
+  expiryDate   DateTime
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  usuario   Usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioId String @unique
+
+  @@index([sessionId])
+  @@index([usuarioId])
+  @@index([expiryDate])
+  @@map("google_tokens")
 }
 
 model Nucleos {
@@ -143,12 +162,10 @@ model Lenha {
 }
 
 model Permissoes {
-  id          String    @id @default(cuid())
-  name        String    @unique
+  id          String     @id @default(cuid())
+  name        String     @unique
   description String?
   usuarios    Usuarios[]
 
   @@map("permissoes")
 }
-
-

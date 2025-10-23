@@ -12,12 +12,12 @@ import {
 import { env } from "./env";
 import { errorHandler } from "./error-handler";
 
+import fastifyCookie from "@fastify/cookie";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import Routing from "./routes";
 import fastifyWebsocket from "@fastify/websocket";
-import fastifyCookie from "@fastify/cookie";
 import qs from "qs";
+import Routing from "./routes";
 
 const app = fastify({
   querystringParser: (str) => qs.parse(str), // Use qs for parsing query strings

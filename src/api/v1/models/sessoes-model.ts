@@ -7,11 +7,26 @@ const prisma = new PrismaClient();
 
 export class SessoesModel {
   async create(data: z.infer<typeof SessoesCreateInputSchema>) {
-    return prisma.sessoes.create({ data });
+    const include = {
+      Nucleos: {
+        select: {
+          nome: true,
+          regioes: {
+            select: {
+              nome: true,
+            },
+          },
+        },
+      },
+    };
+    return prisma.sessoes.create({
+      data,
+      include,
+    });
   }
 
   async update(data: z.infer<typeof SessoesUpdateInputSchema>) {
-    console.log(data)
+    console.log(data);
     return prisma.sessoes.update({
       where: { id: data.id as string },
       data,
@@ -47,7 +62,14 @@ export class SessoesModel {
     return prisma.sessoes.findMany({
       where: {
         ...where,
-        nucleosId: nucleoId
+        nucleosId: nucleoId,
+      },
+      include: {
+        Nucleos: {
+          select: {
+            nome: true,
+          },
+        },
       },
       orderBy: { data: "desc" },
     });

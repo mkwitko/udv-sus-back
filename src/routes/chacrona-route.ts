@@ -7,9 +7,9 @@ import type { FastifyInstance } from "fastify";
 
 
 export async function registerChacronaRoutes(app: FastifyInstance) {
-  await createChacronaRoute(app);
-  await updateChacronaRoute(app);
-  await getChacronaByIdRoute(app);
-  await getAllChacronasRoute(app);
-  await deleteChacronaRoute(app);
+  createChacronaRoute(app);
+  updateChacronaRoute(app);
+  getChacronaByIdRoute(app);
+  getAllChacronasRoute(app);
+  deleteChacronaRoute(app);
 }

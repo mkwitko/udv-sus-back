@@ -7,9 +7,9 @@ import type { FastifyInstance } from "fastify";
 
 
 export async function registerPreparosRoutes(app: FastifyInstance) {
-  await createPreparoRoute(app);
-  await updatePreparoRoute(app);
-  await getPreparoByIdRoute(app);
-  await getAllPreparosRoute(app);
-  await deletePreparoRoute(app);
+  createPreparoRoute(app);
+  updatePreparoRoute(app);
+  getPreparoByIdRoute(app);
+  getAllPreparosRoute(app);
+  deletePreparoRoute(app);
 }

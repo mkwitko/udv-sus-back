@@ -7,3 +7,12 @@ declare module "@fastify/jwt" {
     };
   }
 }
+
+import "fastify";
+
+declare module "fastify" {
+  interface FastifyRequest {
+    googleToken?: string;
+  }
+}
+

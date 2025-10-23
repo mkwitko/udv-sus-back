@@ -3,61 +3,72 @@ import { setHttpOnlyCookie } from "@/api/v1/services/authentication/set-http-onl
 import { UnauthorizedError } from "@/errors/unauthorized-error";
 import type { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
-import { TokenExpiredError } from "jsonwebtoken";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
-export const authenticationMiddleware = fastifyPlugin(
-  async (app: FastifyInstance) => {
-    app.addHook("preHandler", async (request, reply) => {
-      try {
-        // Extract the access token from cookies
-        const accessToken = request.cookies.accessToken;
-        const refreshToken = request.cookies.refreshToken;
+export const authenticationMiddleware = fastifyPlugin(async (app: FastifyInstance) => {
+  app.addHook("preHandler", async (request, reply) => {
+    const accessToken = request.cookies.accessToken;
+    const refreshToken = request.cookies.refreshToken;
 
-        // If there's no access token, throw an UnauthorizedError
-        if (!accessToken) {
-          if (!refreshToken)
-            throw new UnauthorizedError("Token de acesso não fornecido");
-
-          throw new TokenExpiredError(
-            "Token de acesso não fornecido",
-            new Date()
-          );
+    try {
+      if (!accessToken) {
+        // Se não tem accessToken, tenta com refreshToken
+        if (!refreshToken) {
+          throw new UnauthorizedError("Nenhum token fornecido");
         }
 
-        // Verify the JWT token
-        request.user = await app.jwt.verify(accessToken);
-      } catch (error) {
-        // If the token is expired, try to refresh it
-        if (error instanceof TokenExpiredError) {
-          // Extract the refresh token from cookies
-          const refreshToken = request.cookies.refreshToken;
+        // Se não tem accessToken, vamos forçar um refresh
+        throw new TokenExpiredError("Token de acesso ausente", new Date());
+      }
 
-          if (!refreshToken) {
-            throw new UnauthorizedError("Token de acesso expirado");
-          }
+      // 🔐 Verifica o access token normalmente
+      request.user = await app.jwt.verify(accessToken);
+      return; // tudo certo, segue a request
 
-          try {
-            // Verify the refresh token
-            await app.jwt.verify(refreshToken);
+    } catch (error) {
+      // ============================================
+      // Caso 1: Token expirado → tenta refresh
+      // ============================================
+      if (error instanceof TokenExpiredError) {
+        if (!refreshToken) {
+          throw new UnauthorizedError("Token expirado e sem refresh token");
+        }
 
-            // Issue a new access token
-            const {
-              accessToken: newAccessToken,
-              refreshToken: newRefreshToken,
-            } = await refreshTokenService(refreshToken);
+        try {
+          // Verifica se o refresh token é válido
+          const decodedRefresh = await app.jwt.verify(refreshToken);
 
-            setHttpOnlyCookie(reply, newAccessToken, newRefreshToken);
+          // Gera novos tokens
+          const {
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+          } = await refreshTokenService(refreshToken);
 
-            // Assign the user to the request object
-            request.user = await app.jwt.verify(newAccessToken);
-          } catch (refreshError) {
-            throw new UnauthorizedError("Token de atualização não fornecido");
-          }
-        } else {
-          // Handle other JWT verification errors
-          throw new UnauthorizedError();
+          // Atualiza os cookies
+          setHttpOnlyCookie(reply, newAccessToken, newRefreshToken);
+
+          // Define o novo usuário no request
+          request.user = await app.jwt.verify(newAccessToken);
+
+          return;
+        } catch (refreshError) {
+          request.log.warn({ err: refreshError }, "Falha ao renovar token");
+          throw new UnauthorizedError("Token de atualização inválido ou expirado");
         }
       }
-    });
-  }
-);
+
+      // ============================================
+      // Caso 2: Token inválido ou adulterado
+      // ============================================
+      if (error instanceof JsonWebTokenError) {
+        throw new UnauthorizedError("Token inválido");
+      }
+
+      // ============================================
+      // Caso 3: Qualquer outro erro inesperado
+      // ============================================
+      request.log.error({ err: error }, "Erro no middleware de autenticação");
+      throw new UnauthorizedError("Falha ao autenticar usuário");
+    }
+  });
+});

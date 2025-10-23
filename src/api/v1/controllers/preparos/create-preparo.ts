@@ -10,25 +10,31 @@ export const PreparosCreateInputSchema = z.object({
   fim: z.string(),
   producaoLitros: z.string(),
   nucleosId: z.string().optional(),
-  mariri: z.object({
-    pesoKg: z.string(),
-    unidades: z.string(),
-    tipo: z.string(),
-    tipoPlantacao: z.string(),
-    origemMensagem: z.string(),
-  }).optional(),
-  chacrona: z.object({
-    pesoKg: z.string(),
-    unidades: z.string(),
-    tipoPlantacao: z.string(),
-    origemMensagem: z.string(),
-  }).optional(),
-  lenha: z.object({
-    quantidadeM2: z.string(),
-    tempoFornalhaAcesa: z.string(),
-    tipoLenha: z.string(),
-    tipoFornalha: z.string(),
-  }).optional(),
+  mariri: z
+    .object({
+      pesoKg: z.string(),
+      unidades: z.string(),
+      tipo: z.string(),
+      tipoPlantacao: z.string(),
+      origemMensagem: z.string(),
+    })
+    .optional(),
+  chacrona: z
+    .object({
+      pesoKg: z.string(),
+      unidades: z.string(),
+      tipoPlantacao: z.string(),
+      origemMensagem: z.string(),
+    })
+    .optional(),
+  lenha: z
+    .object({
+      quantidadeM2: z.string(),
+      tempoFornalhaAcesa: z.string(),
+      tipoLenha: z.string(),
+      tipoFornalha: z.string(),
+    })
+    .optional(),
 });
 
 export const preparosResponse = z.object({
@@ -37,6 +43,44 @@ export const preparosResponse = z.object({
   fim: z.date(),
   producaoLitros: z.string(),
   nucleosId: z.string().nullable().optional(),
+  Nucleos: z
+    .object({
+      nome: z.string(),
+      regioes: z
+        .object({
+          nome: z.string(),
+        })
+        .nullable(),
+    })
+    .nullable(),
+  mariri: z
+    .object({
+      id: z.string(),
+      pesoKg: z.string(),
+      unidades: z.string(),
+      tipo: z.string(),
+      tipoPlantacao: z.string(),
+      origemMensagem: z.string(),
+    })
+    .nullable(),
+  chacrona: z
+    .object({
+      id: z.string(),
+      pesoKg: z.string(),
+      unidades: z.string(),
+      tipoPlantacao: z.string(),
+      origemMensagem: z.string(),
+    })
+    .nullable(),
+  lenha: z
+    .object({
+      id: z.string(),
+      quantidadeM2: z.string(),
+      tempoFornalhaAcesa: z.string(),
+      tipoLenha: z.string(),
+      tipoFornalha: z.string(),
+    })
+    .nullable(),
 });
 
 export async function createPreparoRoute(app: FastifyInstance) {

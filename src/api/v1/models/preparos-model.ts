@@ -1,13 +1,27 @@
 import { PrismaClient } from "@prisma/client";
 import type z from "zod";
-import type { PreparosUpdateInputSchema } from "../controllers/preparos/update-preparo";
 import type { PreparosCreateInputSchema } from "../controllers/preparos/create-preparo";
+import type { PreparosUpdateInputSchema } from "../controllers/preparos/update-preparo";
 
 const prisma = new PrismaClient();
 
 export class PreparosModel {
   async create(data: z.infer<typeof PreparosCreateInputSchema>) {
     const { mariri, chacrona, lenha, nucleosId, ...preparoData } = data;
+
+    const include = {
+      mariri: true,
+      chacrona: true,
+      lenha: true,
+      Nucleos: {
+        select: {
+          nome: true,
+          regioes: {
+            select: { nome: true },
+          },
+        },
+      },
+    };
 
     return prisma.preparos.create({
       data: {
@@ -33,12 +47,7 @@ export class PreparosModel {
           },
         }),
       },
-      include: {
-        mariri: true,
-        chacrona: true,
-        lenha: true,
-        Nucleos: true,
-      },
+      include,
     });
   }
 
@@ -69,12 +78,12 @@ export class PreparosModel {
         gte: new Date(dataInicio),
         lte: new Date(dataFim),
       };
-    } 
+    }
 
     return prisma.preparos.findMany({
       where: {
         ...where,
-        nucleosId: nucleoId
+        nucleosId: nucleoId,
       },
       include: {
         mariri: true,

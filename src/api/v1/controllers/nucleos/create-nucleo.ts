@@ -8,7 +8,10 @@ const nucleosModel = new NucleosModel();
 export const nucleosResponse = z.object({
   id: z.string(),
   nome: z.string(),
-  regiao: z.string(),
+  regioes: z.object({
+    id: z.string(),
+    nome: z.string(),
+  }).nullable()
 });
 
 export const NucleosCreateInputSchema = z.object({
