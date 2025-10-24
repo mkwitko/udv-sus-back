@@ -33,6 +33,9 @@ export class NucleosModel {
       where: { deletado: false },
       include: {
         regioes: true
+      },
+      orderBy: {
+        nome: "asc"
       }
     });
 

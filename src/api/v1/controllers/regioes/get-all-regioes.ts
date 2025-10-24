@@ -22,7 +22,9 @@ export async function getAllRegioes(app: FastifyInstance) {
       },
     },
     async (_, reply) => {
-      const regioes = await prisma.regioes.findMany();
+      const regioes = await prisma.regioes.findMany({
+        orderBy: { nome: "asc" },
+      });
       return reply.status(200).send(regioes);
     }
   );

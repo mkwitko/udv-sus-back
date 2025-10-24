@@ -42,6 +42,8 @@ export async function googleAuth(app: FastifyInstance) {
             env.REDIRECT_URI
           );
 
+          console.log({ oauth2Client });
+
           const authUrl = oauth2Client.generateAuthUrl({
             access_type: "offline",
             scope: [
@@ -51,6 +53,8 @@ export async function googleAuth(app: FastifyInstance) {
             state,
             prompt: "consent", // Garante que sempre recebemos refresh_token
           });
+
+          console.log("Generated auth URL:", authUrl);
 
           return reply.status(200).send({ authUrl });
         } catch (error) {

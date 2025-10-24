@@ -7,26 +7,26 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🚀 Iniciando seed...");
 
-  // === 1. Buscar regiões existentes ===
-  const regioes = await prisma.regioes.findMany();
-  if (regioes.length === 0) {
-    throw new Error(
-      "Nenhuma região encontrada. Crie as regiões antes de rodar o seed."
-    );
-  }
-  console.log(`🗺️ Encontradas ${regioes.length} regiões.`);
+  // // === 1. Buscar regiões existentes ===
+  // const regioes = await prisma.regioes.findMany();
+  // if (regioes.length === 0) {
+  //   throw new Error(
+  //     "Nenhuma região encontrada. Crie as regiões antes de rodar o seed."
+  //   );
+  // }
+  // console.log(`🗺️ Encontradas ${regioes.length} regiões.`);
 
-  // === 2. Criar núcleos por região ===
-  for (const regiao of regioes) {
-    await prisma.nucleos.create({
-      data: {
-        nome: `Núcleo ${regiao.nome}`,
-        regioesId: regiao.id,
-      },
-    });
-  }
+  // // === 2. Criar núcleos por região ===
+  // for (const regiao of regioes) {
+  //   await prisma.nucleos.create({
+  //     data: {
+  //       nome: `Núcleo ${regiao.nome}`,
+  //       regioesId: regiao.id,
+  //     },
+  //   });
+  // }
 
-  console.log("✅ Núcleos criados!");
+  // console.log("✅ Núcleos criados!");
 
   // === 3. Criar sessões e preparos com dados variados ===
   const nucleos = await prisma.nucleos.findMany();
@@ -40,11 +40,11 @@ async function main() {
       const dataSessao = faker.date.recent({ days: 90 });
       await prisma.sessoes.create({
         data: {
-          sessao: `Sessão ${i} - ${nucleo.nome}`,
+          sessao: faker.helpers.arrayElement(["escala", "escala_anual", "sessao_instrutiva", "casal", "qm"]),
           descricao: faker.lorem.sentence(),
-          pessoas: `${faker.number.int({ min: 10, max: 40 })} pessoas`,
+          pessoas: `${faker.number.int({ min: 10, max: 40 })}`,
           data: dataSessao.toISOString(),
-          quantidadeVegetal: `${faker.number.int({ min: 5, max: 30 })} litros`,
+          quantidadeVegetal: `${faker.number.int({ min: 5, max: 30 })}`,
           nucleosId: nucleo.id,
         },
       });
@@ -58,8 +58,8 @@ async function main() {
         data: {
           pesoKg: faker.number.int({ min: 10, max: 30 }).toString(),
           unidades: faker.number.int({ min: 3, max: 10 }).toString(),
-          tipo: faker.helpers.arrayElement(["Cipó grosso", "Cipó fino"]),
-          tipoPlantacao: faker.helpers.arrayElement(["Nativa", "Cultivada"]),
+          tipo: faker.helpers.arrayElement(["Caupuri, Tucunaca"]),
+          tipoPlantacao: faker.helpers.arrayElement(["Nativo", "Plantado"]),
           origemMensagem: faker.location.city(),
         },
       });
@@ -68,7 +68,7 @@ async function main() {
         data: {
           pesoKg: faker.number.int({ min: 5, max: 20 }).toString(),
           unidades: faker.number.int({ min: 50, max: 200 }).toString(),
-          tipoPlantacao: faker.helpers.arrayElement(["Sombra", "Sol"]),
+          tipoPlantacao: faker.helpers.arrayElement(["Nativo", "Plantado"]),
           origemMensagem: faker.location.city(),
         },
       });
@@ -76,15 +76,15 @@ async function main() {
       const lenha = await prisma.lenha.create({
         data: {
           quantidadeM2: faker.number.int({ min: 2, max: 10 }).toString(),
-          tempoFornalhaAcesa: `${faker.number.int({ min: 3, max: 12 })} horas`,
+          tempoFornalhaAcesa: `${faker.number.int({ min: 3, max: 12 })}`,
           tipoLenha: faker.helpers.arrayElement([
             "Eucalipto",
             "Cambuí",
             "Misto",
           ]),
           tipoFornalha: faker.helpers.arrayElement([
-            "Abertura lateral",
-            "Fornalha fechada",
+            "Convencional",
+            "Fornalha",
           ]),
         },
       });

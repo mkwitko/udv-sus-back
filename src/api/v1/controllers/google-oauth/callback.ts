@@ -8,7 +8,7 @@ import z from "zod";
 export const GoogleCallbackQuerySchema = z.object({
   code: z.string().optional(),
   error: z.string().optional(),
-  state: z.string(), 
+  state: z.string(),
 });
 
 export async function googleCallback(app: FastifyInstance) {
@@ -26,16 +26,18 @@ export async function googleCallback(app: FastifyInstance) {
     async (request, reply) => {
       const { code, error, state } = request.query;
 
+      console.log({ code, error, state });
+
       if (error) {
         request.log.error("OAuth error:", error);
         return reply.redirect(
-          `${env.EXPO_SCHEME}://authenticated/(tabs)/integrations?error=${error}`
+          `${env.EXPO_SCHEME}://authenticated?error=${error}`
         );
       }
 
       if (!code) {
         return reply.redirect(
-          `${env.EXPO_SCHEME}://authenticated/(tabs)/integrations?error=no_code`
+          `${env.EXPO_SCHEME}://authenticated?error=no_code`
         );
       }
 
@@ -46,21 +48,26 @@ export async function googleCallback(app: FastifyInstance) {
           env.REDIRECT_URI
         );
 
+        console.log("Exchanging code for tokens... - ", code);
         const { tokens } = await oauth2Client.getToken(code);
+        console.log("Tokens received:", tokens);
+
         oauth2Client.setCredentials(tokens);
 
         const sessionId = crypto.randomUUID();
-        const expiryDate = new Date(tokens.expiry_date || Date.now() + 3600 * 1000);
+        const expiryDate = new Date(
+          tokens.expiry_date || Date.now() + 3600 * 1000
+        );
 
         let usuarioId = "";
-        
-       try {
-            // Decodificar o state que contém o ID do usuário do app
-            const stateData = JSON.parse(Buffer.from(state, 'base64').toString());
-            usuarioId = stateData.usuarioId || null;
-          } catch (err) {
-            request.log.warn("Failed to parse state:", err);
-          }
+
+        try {
+          // Decodificar o state que contém o ID do usuário do app
+          const stateData = JSON.parse(Buffer.from(state, "base64").toString());
+          usuarioId = stateData.usuarioId || null;
+        } catch (err) {
+          request.log.warn("Failed to parse state:", err);
+        }
 
         const existingToken = await prisma.googleTokens.findUnique({
           where: {
@@ -70,17 +77,19 @@ export async function googleCallback(app: FastifyInstance) {
 
         if (existingToken) {
           // Atualizar tokens existentes
-          await prisma.googleTokens.update({
-            where: { id: existingToken.id },
-            data: {
-              sessionId,
-              accessToken: tokens.access_token!,
-              refreshToken: tokens.refresh_token!,
-              expiryDate,
-            },
-          }).catch((err) => {
-            console.log("Error updating existing token:", err);
-          });
+          await prisma.googleTokens
+            .update({
+              where: { id: existingToken.id },
+              data: {
+                sessionId,
+                accessToken: tokens.access_token!,
+                refreshToken: tokens.refresh_token!,
+                expiryDate,
+              },
+            })
+            .catch((err) => {
+              console.log("Error updating existing token:", err);
+            });
         } else {
           // Criar nova conexão Google
           await prisma.googleTokens.create({
@@ -94,13 +103,19 @@ export async function googleCallback(app: FastifyInstance) {
           });
         }
 
+        console.log(
+          "Google OAuth successful, redirecting to:",
+          `${env.EXPO_SCHEME}://authenticated?session=${sessionId}`
+        );
+
         return reply.redirect(
-          `${env.EXPO_SCHEME}://authenticated/(tabs)/integrations?session=${sessionId}}`
+          `${env.EXPO_SCHEME}://authenticated?session=${sessionId}`
         );
       } catch (error) {
+        console.log("OAuth callback error:", error);
         request.log.error("OAuth callback error:", error);
         return reply.redirect(
-          `${env.EXPO_SCHEME}://authenticated/(tabs)/integrations?error=authentication_failed`
+          `${env.EXPO_SCHEME}://authenticated/(tabs)/integration?error=authentication_failed`
         );
       }
     }
