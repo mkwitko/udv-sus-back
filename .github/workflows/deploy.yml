@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22.3.0'  # Changed to 18 as Node 22.3.0 isn't stable yet
+          node-version: '24.9.0'  # Changed to 18 as Node 22.3.0 isn't stable yet
 
       - name: Install dependencies
         run: yarn
