@@ -1,7 +1,7 @@
 import type z from "zod";
 import type { SessoesCreateInputSchema } from "../controllers/sessoes/create-sessao";
 import type { SessoesUpdateInputSchema } from "../controllers/sessoes/update-sessao";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
