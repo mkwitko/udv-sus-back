@@ -54,12 +54,41 @@ export class PreparosModel {
   async update(data: z.infer<typeof PreparosUpdateInputSchema>) {
     return prisma.preparos.update({
       where: { id: data.id as string },
-      data,
+      select: {
+        id: true,
+      },
+      data: {
+        mariri: {
+          update: data.mariri,
+        },
+        chacrona: {
+          update: data.chacrona,
+        },
+        lenha: {
+          update: data.lenha,
+        },
+        producaoLitros: data.producaoLitros,
+        inicio: data.inicio,
+        fim: data.fim,
+      },
     });
   }
 
   async findById(id: string) {
-    return prisma.preparos.findUnique({ where: { id } });
+    const include = {
+      mariri: true,
+      chacrona: true,
+      lenha: true,
+      Nucleos: {
+        select: {
+          nome: true,
+          regioes: {
+            select: { nome: true },
+          },
+        },
+      },
+    };
+    return prisma.preparos.findUnique({ where: { id }, include });
   }
 
   async findAll(
@@ -98,9 +127,17 @@ export class PreparosModel {
     if (soft) {
       return prisma.preparos.update({
         where: { id },
+        select: {
+          id: true,
+        },
         data: { deletado: true, deletadoEm: new Date() },
       });
     }
-    return prisma.preparos.delete({ where: { id } });
+    return prisma.preparos.delete({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
   }
 }

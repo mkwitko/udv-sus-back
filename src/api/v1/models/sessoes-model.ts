@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import type z from "zod";
 import type { SessoesCreateInputSchema } from "../controllers/sessoes/create-sessao";
 import type { SessoesUpdateInputSchema } from "../controllers/sessoes/update-sessao";
+import { PrismaClient } from "@prisma/client/extension";
 
 const prisma = new PrismaClient();
 
@@ -26,9 +26,11 @@ export class SessoesModel {
   }
 
   async update(data: z.infer<typeof SessoesUpdateInputSchema>) {
-    console.log(data);
     return prisma.sessoes.update({
       where: { id: data.id as string },
+      select: {
+        id: true,
+      },
       data,
     });
   }
@@ -76,6 +78,11 @@ export class SessoesModel {
   }
 
   async exclude(id: string) {
-    return prisma.sessoes.delete({ where: { id } });
+    return prisma.sessoes.delete({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
   }
 }

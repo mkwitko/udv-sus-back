@@ -5,7 +5,7 @@ import { z } from "zod";
 const envSchema = z.object({
   PORT: z.coerce.number(),
   ENVIRONMENT: z.enum(["development", "production"]).default("production"),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string(),
   JWT_PRIVATE_KEY: z.string(),
   JWT_PUBLIC_KEY: z.string(),
   GOOGLE_CLIENT_ID: z.string(),

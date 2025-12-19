@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { SessoesModel } from "../../models/sessoes-model";
-import { sessoesResponse } from "./create-sessao";
 import z from "zod";
 
 const sessoesModel = new SessoesModel();
@@ -16,7 +15,6 @@ export const SessoesUpdateInputSchema = z.object({
   nucleosId: z.string().optional(),
 });
 
-
 export async function updateSessaoRoute(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().put(
     "/sessao/update",
@@ -25,7 +23,11 @@ export async function updateSessaoRoute(app: FastifyInstance) {
         tags: ["Sessoes"],
         summary: "Update Sessao",
         body: SessoesUpdateInputSchema,
-        response: { 200: sessoesResponse },
+        response: {
+          200: z.object({
+            id: z.string(),
+          }),
+        },
       },
     },
     async (request, reply) => {
