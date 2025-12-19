@@ -6,11 +6,14 @@ import type { UsuariosUpdateInputSchema } from "../controllers/usuarios/update-u
 
 export class UsuariosModel {
   // Cria usuário
-  async create(
-    data: z.infer<typeof UsuariosCreateInputSchema>
-  ) {
+  async create(data: z.infer<typeof UsuariosCreateInputSchema>) {
     const user = await prisma.usuarios.create({
-      data,
+      data: {
+        ...data,
+        permissoes: {
+          connect: data.permissoes.split(",").map((id) => ({ id })),
+        },
+      },
       include: {
         nucleo: {
           select: {
@@ -20,7 +23,7 @@ export class UsuariosModel {
               select: {
                 id: true,
                 nome: true,
-              }
+              },
             },
           },
         },
@@ -28,8 +31,8 @@ export class UsuariosModel {
           select: {
             id: true,
             name: true,
-          }
-        }
+          },
+        },
       },
     });
     return user;
@@ -53,7 +56,7 @@ export class UsuariosModel {
               select: {
                 id: true,
                 nome: true,
-              }
+              },
             },
           },
         },
@@ -61,8 +64,8 @@ export class UsuariosModel {
           select: {
             id: true,
             name: true,
-          }
-        }
+          },
+        },
       },
     });
 

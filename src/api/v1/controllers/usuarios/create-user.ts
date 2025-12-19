@@ -7,28 +7,33 @@ export const UsuariosCreateInputSchema = z.object({
   nome: z.string(),
   cpf: z.string().optional(),
   senha: z.string(),
-  email: z.string().email().optional(),
-  ativo: z.boolean().optional(),
-  administrador: z.boolean().optional(),
-  nucleoId: z.string().optional(),
+  email: z.string().email(),
+  permissoes: z.string(),
+  nucleoId: z.string(),
 });
 
 export const userResponse = z.object({
   id: z.string(),
   nome: z.string(),
   email: z.string().nullable(),
-  permissoes: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-  })),
-  nucleo: z.object({
-    id: z.string(),
-    nome: z.string(),
-    regioes: z.object({
+  permissoes: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    })
+  ),
+  nucleo: z
+    .object({
       id: z.string(),
       nome: z.string(),
-    }).nullable()
-  }).nullable()
+      regioes: z
+        .object({
+          id: z.string(),
+          nome: z.string(),
+        })
+        .nullable(),
+    })
+    .nullable(),
 });
 
 export async function createUser(app: FastifyInstance) {
